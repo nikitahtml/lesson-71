@@ -1,40 +1,41 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { clearCart } from '../redux/slices/cartSlice';
-import axiosApi from '../axiosApi';
 
-const CheckoutModal: React.FC = () => {
-    const cartItems = useSelector((state: RootState) => state.cart.items);
+interface CheckoutModalProps {
+    onClose: () => void;
+}
+
+const CheckoutModal: React.FC<CheckoutModalProps> = ({ onClose }) => {
     const dispatch = useDispatch();
+    const cartItems = useSelector((state: RootState) => state.cart.items);
 
-    const handleOrder = async () => {
-        const orderItems = cartItems.reduce((acc, item) => {
-            acc[item.dish.id] = item.quantity;
-            return acc;
-        }, {} as Record<string, number>);
-
-        const total = cartItems.reduce((sum, item) => sum + item.dish.price * item.quantity, 0) + 150;
-
-        await axiosApi.post('/orders.json', { items: orderItems, total });
-
+    const handleOrder = () => {
         dispatch(clearCart());
+        onClose();
     };
 
     return (
-        <div className="checkout-modal">
-            <h2>Предварительный просмотр заказа</h2>
-            <ul>
-                {cartItems.map(item => (
-                    <li key={item.dish.id}>
-                        <img src={item.dish.image} alt={item.dish.title} />
-                        <h3>{item.dish.title}</h3>
-                        <p>{item.dish.price} сом x {item.quantity}</p>
-                    </li>
-                ))}
-            </ul>
-            <button onClick={handleOrder}>Заказать</button>
-            <button>Отмена</button>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>Оформление заказа</h2>
+                {Object.keys(cartItems).length === 0 ? (
+                    <p>Ваша корзина пуста</p>
+                ) : (
+                    <div>
+                        <ul>
+                            {Object.entries(cartItems).map(([dishId, quantity]) => (
+                                <li key={dishId}>
+                                    ID блюда: {dishId}, Количество: {quantity}
+                                </li>
+                            ))}
+                        </ul>
+                        <button onClick={handleOrder}>Заказать</button>
+                        <button onClick={onClose}>Отмена</button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

@@ -3,26 +3,26 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 
 interface DishCardProps {
-    dish: {
-        id: string;
-        title: string;
-        price: number;
-        image: string;
-    };
+    dish: { id: string; title: string; price: number; image: string };
 }
 
 const DishCard: React.FC<DishCardProps> = ({ dish }) => {
     const dispatch = useDispatch();
 
     const handleAddToCart = () => {
-        dispatch(addToCart({ id: dish.id, quantity: 1 }));
+        dispatch(addToCart(dish));
     };
 
     return (
-        <div>
-            <img src={dish.image} alt={dish.title} />
+        <div className="dish-card">
             <h3>{dish.title}</h3>
-            <p>${dish.price}</p>
+            <p>Цена: ${dish.price}</p>
+            <img
+                src={dish.image}
+                alt={dish.title}
+                onError={(e) => (e.currentTarget.src = '/path/to/default-image.jpg')} // Замените путь на путь к запасному изображению
+                className="dish-image"
+            />
             <button onClick={handleAddToCart}>Добавить в корзину</button>
         </div>
     );

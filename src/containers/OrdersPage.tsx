@@ -5,7 +5,7 @@ import { fetchOrders, completeOrder } from '../redux/slices/ordersSlice';
 
 const OrdersPage: React.FC = () => {
     const dispatch = useDispatch();
-    const orders = useSelector((state: RootState) => state.orders.orders);
+    const { orders, status, error } = useSelector((state: RootState) => state.orders);
 
     React.useEffect(() => {
         dispatch(fetchOrders());
@@ -14,6 +14,9 @@ const OrdersPage: React.FC = () => {
     const handleCompleteOrder = (id: string) => {
         dispatch(completeOrder(id));
     };
+
+    if (status === 'loading') return <div>Загрузка...</div>;
+    if (status === 'failed') return <div>Ошибка: {error}</div>;
 
     return (
         <div className="orders-page">

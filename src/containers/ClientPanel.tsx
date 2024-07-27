@@ -9,24 +9,23 @@ const ClientPanel: React.FC = () => {
     const { dishes, loading, error } = useSelector((state: RootState) => state.dishes);
 
     useEffect(() => {
-        console.log('Dispatching fetchDishes action');
         dispatch(fetchDishes());
     }, [dispatch]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>Ошибка: {error}</div>;
 
     return (
-        <div>
-            <h1>Menu</h1>
+        <div className="client-panel">
+            <h1>Меню</h1>
             {dishes && dishes.length > 0 ? (
-                <div>
+                <div className="dish-list">
                     {dishes.map(dish => (
                         <DishCard key={dish.id} dish={dish} />
                     ))}
                 </div>
             ) : (
-                <div>No dishes available</div>
+                <div>Нет доступных блюд</div>
             )}
         </div>
     );
